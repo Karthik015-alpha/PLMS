@@ -83,7 +83,7 @@ export default function DashboardPage() {
       {/* Recent Activity Feed */}
       <div className="mt-10">
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">Recent Activity</h2>
-        <ActivityFeed activities={progressList?.slice(0, 5) ?? []} />
+        <ActivityFeed activities={(progressList as any)?.slice(0, 5) ?? []} />
       </div>
     </div>
   );

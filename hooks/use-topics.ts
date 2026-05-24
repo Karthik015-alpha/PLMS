@@ -143,7 +143,7 @@ export function useTopics() {
       // If the topic status changed to "In Progress", award 25% subject progress.
       try {
         const newStatus = payload.status ?? normalized.status
-        if ((newStatus === 'In Progress' || newStatus === 'in progress') && normalized.subjectId) {
+        if (newStatus === 'In Progress' && normalized.subjectId) {
           void fetch('/api/progress/subject', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
