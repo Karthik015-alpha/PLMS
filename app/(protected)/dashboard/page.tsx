@@ -76,6 +76,16 @@ export default function DashboardPage() {
                       <p className="font-medium text-gray-900">Viewed file: <span className="font-semibold">{p.noteTitle || 'Untitled'}</span></p>
                       <p className="text-sm text-gray-500 mt-1">Opened file</p>
                     </>
+                  ) : p.type === 'task_created' ? (
+                    <>
+                      <p className="font-medium text-gray-900">Created task: <span className="font-semibold">{p.noteTitle || p.title || 'Untitled'}</span></p>
+                      <p className="text-sm text-gray-500 mt-1">Added to planner</p>
+                    </>
+                  ) : p.type === 'task_completed' ? (
+                    <>
+                      <p className="font-medium text-gray-900">Completed task: <span className="font-semibold">{p.noteTitle || p.title || 'Untitled'}</span></p>
+                      <p className="text-sm text-gray-500 mt-1">Marked as done</p>
+                    </>
                   ) : p.type === 'progress' ? (
                     <>
                       <p className="font-medium text-gray-900">

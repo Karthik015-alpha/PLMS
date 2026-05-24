@@ -47,6 +47,7 @@ export function pushActivity(event: Omit<ActivityEvent, 'createdAt' | 'id'> & { 
     // trim to 50
     const kept = events.slice(0, 50);
     writeRaw({ ts, events: kept });
+    window.dispatchEvent(new CustomEvent('plms:activity-changed', { detail: ev }));
   } catch (e) {
     console.warn('activity-local: push failed', e);
   }

@@ -15,11 +15,11 @@ export async function GET() {
     const userId = await getUserId();
     if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 
-    // Fetch recent progress rows
+    // Fetch recent progress rows (by user_id)
     const { data: progressRows } = await supabaseServer
       .from('progress')
       .select('*')
-      .eq('owner', userId)
+      .eq('user_id', userId)
       .order('updated_at', { ascending: false })
       .limit(20);
 

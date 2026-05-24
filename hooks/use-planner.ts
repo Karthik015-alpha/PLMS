@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Task, ApiResponse } from '@/types/planner';
 import { CreateTaskPayload, UpdateTaskPayload } from '@/features/planner/planner.types';
+import { pushActivity } from '@/lib/activity-local';
 
 export function usePlanner() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -70,6 +71,10 @@ export function usePlanner() {
       });
       if (newTask) {
         setTasks((prev) => [newTask, ...prev]);
+        pushActivity({
+          type: 'task_created',
+          title: newTask.title,
+        });
       }
       return newTask;
     } catch (err) {
@@ -109,6 +114,10 @@ export function usePlanner() {
       });
       if (updatedTask) {
         setTasks((prev) => prev.map((t) => (t.id === taskId ? updatedTask : t)));
+        pushActivity({
+          type: 'task_completed',
+          title: updatedTask.title,
+        });
       }
       return updatedTask;
     } catch (err) {

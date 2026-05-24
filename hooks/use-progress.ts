@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Progress, ProgressApiResponse } from '@/types/progress';
 import { UpdateProgressPayload } from '@/features/progress/progress.types';
+import { readActivities } from '@/lib/activity-local';
 
 export function useProgress() {
   const [progressList, setProgressList] = useState<Progress[]>([]);
@@ -63,7 +64,7 @@ export function useProgress() {
               id: m.id,
               type: m.type,
               noteId: m.noteId || null,
-              noteTitle: m.title || m.title || null,
+              noteTitle: m.title || null,
               createdAt: m.createdAt || m.created_at || m.updatedAt || null,
             }));
             combined = [...mapped, ...combined];
@@ -74,12 +75,38 @@ export function useProgress() {
         console.warn('Failed to fetch activity', e);
       }
 
+      const localEvents = readActivities().map((event) => ({
+        id: event.id,
+        type: event.type,
+        noteId: event.noteId || null,
+        noteTitle: event.title || null,
+        createdAt: event.createdAt,
+      }));
+
+      if (localEvents.length > 0) {
+        combined = [...localEvents, ...combined];
+      }
+
       if (combined) setProgressList(combined as any);
       return data;
     } catch (err) {
       console.error('Error fetching progress:', err);
     }
   }, []);
+
+  useEffect(() => {
+    const handleActivityChanged = () => {
+      void fetchUserProgress();
+    };
+
+    window.addEventListener('plms:activity-changed', handleActivityChanged);
+    window.addEventListener('storage', handleActivityChanged);
+
+    return () => {
+      window.removeEventListener('plms:activity-changed', handleActivityChanged);
+      window.removeEventListener('storage', handleActivityChanged);
+    };
+  }, [fetchUserProgress]);
 
   /**
    * Upserts general progress for a task or subject.
