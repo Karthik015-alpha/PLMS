@@ -67,6 +67,57 @@ export class TopicsService {
     }
   }
 
+  static async listAll() {
+    try {
+      const { data, error } = await supabaseServer
+        .from('topics')
+        .select('*')
+        .order('position', { ascending: true })
+
+      if (error) throw error
+      return (data ?? []) as TopicRow[]
+    } catch (err) {
+      throw new Error(`TopicsService.listAll error: ${(err as Error).message}`)
+    }
+  }
+
+  static async listAllByUser(userId: string) {
+    try {
+      const { data, error } = await supabaseServer
+        .from('topics')
+        .select('topics(*)')
+        .eq('subjects.owner_id', userId)
+        .order('position', { ascending: true })
+
+      if (error) throw error
+      return (data ?? []) as TopicRow[]
+    } catch (err) {
+      // Fallback: if the join fails, try a simpler approach
+      try {
+        const { data: subjects, error: subError } = await supabaseServer
+          .from('subjects')
+          .select('id')
+          .eq('owner_id', userId)
+
+        if (subError) throw subError
+
+        const subjectIds = (subjects ?? []).map((s) => s.id)
+        if (subjectIds.length === 0) return []
+
+        const { data: topics, error: topError } = await supabaseServer
+          .from('topics')
+          .select('*')
+          .in('subject_id', subjectIds)
+          .order('position', { ascending: true })
+
+        if (topError) throw topError
+        return (topics ?? []) as TopicRow[]
+      } catch (fallbackErr) {
+        throw new Error(`TopicsService.listAllByUser error: ${(fallbackErr as Error).message}`)
+      }
+    }
+  }
+
   static async getById(id: string) {
     try {
       const { data, error } = await supabaseServer.from('topics').select('*').eq('id', id).single()

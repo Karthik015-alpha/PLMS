@@ -1,29 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import TopicsService, { TopicStatus } from '@/features/topics/topics.service'
+import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server'
 
 const VALID_STATUSES: TopicStatus[] = ['Not Started', 'In Progress', 'Completed']
 
 const isValidStatus = (value: unknown): value is TopicStatus =>
   typeof value === 'string' && VALID_STATUSES.includes(value as TopicStatus)
 
+async function getUserId(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  const payload = await verifySessionToken(token);
+  return payload?.userId || null;
+}
+
 export async function GET(req: NextRequest) {
   try {
-    const subjectId = req.nextUrl.searchParams.get('subjectId')
-    if (!subjectId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'missing_subject_id',
-            message: 'subjectId query parameter is required.',
-          },
-        },
-        { status: 400 },
-      )
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
-    const topics = await TopicsService.listBySubject(subjectId)
-    return NextResponse.json({ success: true, data: topics }, { status: 200 })
+    const subjectId = req.nextUrl.searchParams.get('subjectId')
+    
+    if (subjectId) {
+      const topics = await TopicsService.listBySubject(subjectId)
+      return NextResponse.json({ success: true, data: topics }, { status: 200 })
+    } else {
+      const topics = await TopicsService.listAllByUser(userId)
+      return NextResponse.json({ success: true, data: topics }, { status: 200 })
+    }
   } catch (error) {
     return NextResponse.json(
       {
