@@ -35,10 +35,11 @@ export class PlannerService {
   /**
    * Fetch all tasks.
    */
-  static async getAllTasks(): Promise<Task[]> {
+  static async getAllTasks(userId: string): Promise<Task[]> {
     const { data, error } = await supabaseServer
       .from(TABLE_NAME)
       .select('*')
+      .eq('owner', userId)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -51,11 +52,12 @@ export class PlannerService {
   /**
    * Fetch a single task by ID.
    */
-  static async getTaskById(taskId: string): Promise<Task | null> {
+  static async getTaskById(taskId: string, userId: string): Promise<Task | null> {
     const { data, error } = await supabaseServer
       .from(TABLE_NAME)
       .select('*')
       .eq('id', taskId)
+      .eq('owner', userId)
       .single();
 
     if (error) {
@@ -70,10 +72,11 @@ export class PlannerService {
    * Fetch all pending tasks.
    * Maps 'Pending' to the corresponding DB enum ('todo', 'in_progress', 'blocked', 'review')
    */
-  static async getPendingTasks(): Promise<Task[]> {
+  static async getPendingTasks(userId: string): Promise<Task[]> {
     const { data, error } = await supabaseServer
       .from(TABLE_NAME)
       .select('*')
+      .eq('owner', userId)
       .neq('status', 'done') // Anything not 'done' or 'cancelled' is conceptually "Pending"
       .neq('status', 'cancelled')
       .order('due_date', { ascending: true, nullsFirst: false });
@@ -88,10 +91,11 @@ export class PlannerService {
   /**
    * Fetch all completed tasks.
    */
-  static async getCompletedTasks(): Promise<Task[]> {
+  static async getCompletedTasks(userId: string): Promise<Task[]> {
     const { data, error } = await supabaseServer
       .from(TABLE_NAME)
       .select('*')
+      .eq('owner', userId)
       .eq('status', 'done')
       .order('updated_at', { ascending: false });
 
@@ -105,11 +109,12 @@ export class PlannerService {
   /**
    * Create a new task.
    */
-  static async createTask(payload: CreateTaskInput): Promise<Task> {
+  static async createTask(payload: CreateTaskInput, userId: string): Promise<Task> {
     const { data, error } = await supabaseServer
       .from(TABLE_NAME)
       .insert([
         {
+          owner: userId,
           title: payload.title,
           details: payload.description || null, // Map description to details
           due_date: payload.dueDate || null,
@@ -129,7 +134,7 @@ export class PlannerService {
   /**
    * Update an existing task.
    */
-  static async updateTask(taskId: string, payload: UpdateTaskInput): Promise<Task> {
+  static async updateTask(taskId: string, payload: UpdateTaskInput, userId: string): Promise<Task> {
     const updates: Record<string, any> = { updated_at: new Date().toISOString() };
     
     if (payload.title !== undefined) updates.title = payload.title;
@@ -144,6 +149,7 @@ export class PlannerService {
       .from(TABLE_NAME)
       .update(updates)
       .eq('id', taskId)
+      .eq('owner', userId)
       .select()
       .single();
 
@@ -157,7 +163,7 @@ export class PlannerService {
   /**
    * Mark a task as completed.
    */
-  static async markTaskCompleted(taskId: string): Promise<Task> {
+  static async markTaskCompleted(taskId: string, userId: string): Promise<Task> {
     const { data, error } = await supabaseServer
       .from(TABLE_NAME)
       .update({
@@ -165,6 +171,7 @@ export class PlannerService {
         updated_at: new Date().toISOString(),
       })
       .eq('id', taskId)
+      .eq('owner', userId)
       .select()
       .single();
 
@@ -178,11 +185,12 @@ export class PlannerService {
   /**
    * Delete a task.
    */
-  static async deleteTask(taskId: string): Promise<boolean> {
+  static async deleteTask(taskId: string, userId: string): Promise<boolean> {
     const { error } = await supabaseServer
       .from(TABLE_NAME)
       .delete()
-      .eq('id', taskId);
+      .eq('id', taskId)
+      .eq('owner', userId);
 
     if (error) {
       throw new Error(`Failed to delete task: ${error.message}`);

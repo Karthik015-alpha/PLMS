@@ -78,7 +78,8 @@ export class AnalyticsService {
     const { data: orphanedTasks } = await supabaseServer
       .from('tasks')
       .select('status')
-      .is('subject_id', null);
+      .is('subject_id', null)
+      .eq('owner', userId);
 
     let total = 0;
     let completed = 0;
