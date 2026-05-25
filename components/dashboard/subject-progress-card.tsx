@@ -54,6 +54,7 @@ export function SubjectProgressCard({
               value: `${averageProgress}%`,
             }}
             height={260}
+            showPercentage={true}
           />
         </div>
 

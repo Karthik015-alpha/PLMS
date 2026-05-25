@@ -4,6 +4,7 @@ import { useDashboard } from '@/hooks/use-dashboard';
 import { StatCard } from '@/components/dashboard/stat-card';
 import { TopicsProgressCard } from '@/components/dashboard/topics-progress-card';
 import { ActivityFeed } from '@/components/dashboard/activity-feed';
+import { FileText } from 'lucide-react';
 
 const SUBJECT_COLORS = ['#0f766e', '#2563eb', '#f97316', '#7c3aed', '#16a34a', '#db2777'];
 
@@ -77,6 +78,12 @@ export default function DashboardPage() {
           title="Completion Rate"
           value={`${analytics?.completionRate ?? 0}%`}
           variant="green"
+        />
+
+        <StatCard
+          title="Notes Saved"
+          value={analytics?.totalNotes ?? 0}
+          icon={<FileText className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />}
         />
       </div>
 

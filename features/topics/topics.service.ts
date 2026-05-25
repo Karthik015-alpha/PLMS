@@ -87,7 +87,7 @@ export class TopicsService {
       const { data: subjects, error: subError } = await supabaseServer
         .from('subjects')
         .select('id')
-        .eq('owner_id', userId)
+        .eq('owner', userId)
 
       if (subError) throw subError
 

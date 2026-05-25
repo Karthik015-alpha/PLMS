@@ -48,7 +48,7 @@ export function TopicsProgressCard({
     .filter((subject) => topicProgressMap[subject.id] && topicProgressMap[subject.id].total > 0)
     .map((subject) => ({
       name: subject.title,
-      value: Math.round((topicProgressMap[subject.id].total / totalTopicsAcrossSubjects) * 100),
+      value: topicProgressMap[subject.id].total,
     }));
 
   const totalProgress = chartData.length
@@ -60,11 +60,11 @@ export function TopicsProgressCard({
 
   if (topics.length === 0) {
     return (
-      <div className="border border-slate-200 p-6 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow md:col-span-2">
-        <h3 className="text-sm text-slate-500 font-semibold uppercase tracking-wider mb-4">
+      <div className="border border-slate-200 dark:border-slate-800 p-6 rounded-2xl bg-white dark:bg-slate-900/50 shadow-sm hover:shadow-md transition-shadow md:col-span-2">
+        <h3 className="text-sm text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-4">
           Topics Progress
         </h3>
-        <div className="flex h-64 items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 text-sm text-slate-500">
+        <div className="flex h-64 items-center justify-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30 text-sm text-slate-500 dark:text-slate-400">
           No topics yet
         </div>
       </div>
@@ -72,18 +72,17 @@ export function TopicsProgressCard({
   }
 
   return (
-    <div className="border border-slate-200 p-6 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow md:col-span-2">
+    <div className="border border-slate-200 dark:border-slate-800 p-6 rounded-2xl bg-white dark:bg-slate-900/50 shadow-sm hover:shadow-md transition-shadow md:col-span-2">
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
-          <h3 className="text-sm text-slate-500 font-semibold uppercase tracking-wider mb-2">
-            Topics Progress
+          <h3 className="text-sm text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-2">
+            Subjects
           </h3>
-          <p className="text-3xl font-bold text-slate-900">{totalTopics} topics</p>
-          <p className="text-sm text-slate-500 mt-1">Colored by subject • {completedTopics} completed</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Colored by subject • {completedTopics} topics completed</p>
         </div>
-        <div className="rounded-2xl bg-slate-50 px-4 py-3 text-right">
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Total Topics</p>
-          <p className="text-2xl font-semibold text-slate-900">{totalTopics}</p>
+        <div className="rounded-2xl bg-slate-50 dark:bg-slate-900/40 px-4 py-3 text-right">
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Total Subjects</p>
+          <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{subjects.length}</p>
         </div>
       </div>
 
@@ -113,7 +112,7 @@ export function TopicsProgressCard({
             return (
               <div
                 key={subject.id}
-                className="flex items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3"
+                className="flex items-center justify-between gap-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30 px-4 py-3"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <span
@@ -121,15 +120,15 @@ export function TopicsProgressCard({
                     style={{ backgroundColor: subjectColorMap[subject.id] }}
                   />
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-900">{subject.title}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{subject.title}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       {progress.completed} of {progress.total} topics completed
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-slate-900">{percentage}%</p>
-                  <p className="text-xs text-slate-500">completion rate</p>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{percentage}%</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">completion rate</p>
                 </div>
               </div>
             );

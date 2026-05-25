@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-800 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-6 transition-colors duration-300">
       <div className="w-full max-w-xl">
         <div className="mx-auto">
           <RegisterForm />

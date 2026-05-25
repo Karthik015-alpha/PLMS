@@ -10,6 +10,7 @@ export interface Analytics {
   pendingTasks: number;
   completionRate: number;
   streakCount: number;
+  totalNotes: number;
 }
 
 /**

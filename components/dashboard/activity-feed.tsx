@@ -54,8 +54,8 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
 
   if (activities.length === 0) {
     return (
-      <div className="border border-dashed border-gray-300 rounded-xl p-10 text-center bg-gray-50">
-        <p className="text-gray-500 font-medium">
+      <div className="border border-dashed border-gray-300 dark:border-gray-800 rounded-xl p-10 text-center bg-gray-50 dark:bg-slate-900/30">
+        <p className="text-gray-500 dark:text-gray-400 font-medium">
           No recent activity found. Start studying to see your progress here!
         </p>
       </div>
@@ -69,13 +69,13 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
         return (
           <li
             key={activity.id}
-            className="border border-gray-100 p-5 rounded-xl bg-white shadow-sm flex justify-between items-center hover:bg-gray-50 transition-colors"
+            className="border border-gray-100 dark:border-gray-800 p-5 rounded-xl bg-white dark:bg-slate-900/50 shadow-sm flex justify-between items-center hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors"
           >
             <div>
-              <p className="font-medium text-gray-900">{content.title}</p>
-              <p className="text-sm text-gray-500 mt-1">{content.description}</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">{content.title}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{content.description}</p>
             </div>
-            <div className="text-sm text-gray-400 font-medium bg-gray-100 px-3 py-1 rounded-full">
+            <div className="text-sm text-gray-400 dark:text-gray-300 font-medium bg-gray-100 dark:bg-slate-800 px-3 py-1 rounded-full">
               {formatDate(activity.updatedAt || activity.createdAt)}
             </div>
           </li>

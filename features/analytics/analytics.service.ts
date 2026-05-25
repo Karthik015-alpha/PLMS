@@ -103,6 +103,19 @@ export class AnalyticsService {
   }
 
   /**
+   * Get total notes belonging to the user from notes_metadata.
+   */
+  static async getTotalNotes(userId: string): Promise<number> {
+    const { count, error } = await supabaseServer
+      .from('notes_metadata')
+      .select('*', { count: 'exact', head: true })
+      .eq('owner', userId);
+
+    if (error) throw new Error(`Failed to count notes: ${error.message}`);
+    return count || 0;
+  }
+
+  /**
    * Fetch complete analytics summary for a user.
    */
   static async getAnalyticsSummary(userId: string): Promise<Analytics> {
@@ -110,10 +123,12 @@ export class AnalyticsService {
       totalSubjects,
       topicsMetrics,
       tasksMetrics,
+      totalNotes,
     ] = await Promise.all([
       this.getTotalSubjects(userId),
       this.getTopicsMetrics(userId),
       this.getTasksMetrics(userId),
+      this.getTotalNotes(userId),
     ]);
 
     // Retrieve the user's latest study activity to calculate streak
@@ -157,6 +172,7 @@ export class AnalyticsService {
       pendingTasks: tasksMetrics.pending,
       completionRate,
       streakCount,
+      totalNotes,
     };
   }
 }

@@ -11,21 +11,21 @@ interface StatCardProps {
 }
 
 const variantStyles = {
-  default: 'border-gray-200 bg-white',
-  orange: 'border-orange-200 bg-gradient-to-br from-orange-50 to-red-50',
-  green: 'border-green-200 bg-gradient-to-br from-green-50 to-emerald-50',
+  default: 'border-gray-200 bg-white dark:border-gray-800 dark:bg-slate-900/50',
+  orange: 'border-orange-200 bg-gradient-to-br from-orange-50 to-red-50 dark:border-orange-900/30 dark:from-orange-950/20 dark:to-red-950/10',
+  green: 'border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 dark:border-green-900/30 dark:from-green-950/20 dark:to-emerald-950/10',
 };
 
 const titleStyles = {
-  default: 'text-gray-500',
-  orange: 'text-orange-600',
-  green: 'text-green-700',
+  default: 'text-gray-500 dark:text-gray-400',
+  orange: 'text-orange-600 dark:text-orange-400',
+  green: 'text-green-700 dark:text-green-400',
 };
 
 const valueStyles = {
-  default: 'text-gray-900',
-  orange: 'text-orange-700',
-  green: 'text-green-800',
+  default: 'text-gray-900 dark:text-gray-100',
+  orange: 'text-orange-700 dark:text-orange-300',
+  green: 'text-green-800 dark:text-green-300',
 };
 
 export function StatCard({
