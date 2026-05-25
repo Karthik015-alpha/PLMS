@@ -55,10 +55,16 @@ export default function TopicDetailPage() {
             <p className="text-sm text-gray-500">Review topic progress and update details.</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Link href={`/subjects/${subjectId}`} className="rounded-md border border-slate-300 px-3 py-2 text-sm">
+            <Link
+              href={`/subjects/${subjectId}`}
+              className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 hover:bg-slate-50 dark:border-gray-800 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
+            >
               Back to subject
             </Link>
-            <Link href={`/subjects/${subjectId}/topics/${topicId}/edit`} className="rounded-md bg-slate-100 px-3 py-2 text-sm text-slate-900 hover:bg-slate-200">
+            <Link
+              href={`/subjects/${subjectId}/topics/${topicId}/edit`}
+              className="rounded-md bg-slate-100 px-3 py-2 text-sm text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
+            >
               Edit topic
             </Link>
             <button
@@ -75,13 +81,13 @@ export default function TopicDetailPage() {
         {error && <p className="text-sm text-red-500">{error}</p>}
 
         {topic && (
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold">{topic.title}</h2>
-            <p className="text-sm text-gray-500 mt-2">Status: {topic.status}</p>
+          <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+            <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{topic.title}</h2>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mt-2">Status: {topic.status}</p>
             {topic.estimatedHours !== undefined && (
-              <p className="text-sm text-gray-500 mt-2">Estimated hours: {topic.estimatedHours}</p>
+              <p className="text-sm text-gray-500 dark:text-slate-400 mt-2">Estimated hours: {topic.estimatedHours}</p>
             )}
-            <div className="mt-4 text-sm text-gray-500 space-y-1">
+            <div className="mt-4 text-sm text-gray-500 dark:text-slate-400 space-y-1">
               <p>Created: {new Date(topic.createdAt).toLocaleDateString()}</p>
               <p>Updated: {new Date(topic.updatedAt).toLocaleDateString()}</p>
             </div>
