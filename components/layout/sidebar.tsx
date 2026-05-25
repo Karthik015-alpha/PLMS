@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Home, BookOpen, Calendar, BarChart2, Settings, LogOut, ChevronLeft, ChevronRight } from 'lucide-react'
+import { logoutUser } from '@/features/auth/auth.actions'
 
 type NavItem = { title: string; href: string; icon: React.ReactNode }
 
@@ -18,6 +19,20 @@ const NAV_ITEMS: NavItem[] = [
 
 export default function Sidebar({ collapsed, onCollapseToggle }: { collapsed: boolean; onCollapseToggle: () => void }) {
   const pathname = usePathname() || '/dashboard'
+  const router = useRouter()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  async function handleLogout() {
+    setIsLoggingOut(true)
+    try {
+      await logoutUser()
+      router.push('/auth/login')
+    } catch (error) {
+      console.error('Logout failed', error)
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
 
   return (
     <aside className={`hidden md:flex md:flex-col md:fixed md:inset-y-0 ${collapsed ? 'md:w-20' : 'md:w-64'} bg-white/6 backdrop-blur border-r border-gray-200 dark:border-gray-800 p-4`}>
@@ -48,9 +63,14 @@ export default function Sidebar({ collapsed, onCollapseToggle }: { collapsed: bo
       </nav>
 
       <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
-        <button className="w-full flex items-center gap-3 p-2 rounded-md text-sm text-red-600 hover:bg-red-50 dark:hover:bg-gray-800">
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="w-full flex items-center gap-3 p-2 rounded-md text-sm text-red-600 hover:bg-red-50 dark:hover:bg-gray-800 disabled:opacity-50"
+        >
           <LogOut size={16} />
-          {!collapsed && <span>Logout</span>}
+          {!collapsed && <span>{isLoggingOut ? 'Signing out...' : 'Logout'}</span>}
         </button>
       </div>
     </aside>
