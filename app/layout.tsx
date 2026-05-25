@@ -80,7 +80,7 @@ export default function RootLayout({
           } catch (_) {}
         `}} />
       </head>
-      <body>{children}</body>
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }
