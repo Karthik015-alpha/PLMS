@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import TopicsService, { TopicStatus } from '@/features/topics/topics.service'
+import { safeErrorMessage } from '@/lib/safe-error'
 
 const VALID_STATUSES: TopicStatus[] = ['Not Started', 'In Progress', 'Completed']
 
@@ -30,7 +31,7 @@ export async function GET(_: NextRequest, context: { params: Promise<{ topicId: 
         success: false,
         error: {
           code: 'topic_fetch_failed',
-          message: (error as Error).message || 'Failed to fetch topic.',
+          message: safeErrorMessage(error, 'Failed to fetch topic.'),
         },
       },
       { status: 500 },
@@ -112,7 +113,7 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ topic
         success: false,
         error: {
           code: 'topic_update_failed',
-          message: (error as Error).message || 'Failed to update topic.',
+          message: safeErrorMessage(error, 'Failed to update topic.'),
         },
       },
       { status: 500 },
@@ -144,7 +145,7 @@ export async function DELETE(_: NextRequest, context: { params: Promise<{ topicI
         success: false,
         error: {
           code: 'topic_delete_failed',
-          message: (error as Error).message || 'Failed to delete topic.',
+          message: safeErrorMessage(error, 'Failed to delete topic.'),
         },
       },
       { status: 500 },

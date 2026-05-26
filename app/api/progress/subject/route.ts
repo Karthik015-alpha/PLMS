@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server';
+import { safeErrorMessage } from '@/lib/safe-error';
 import { ProgressService } from '@/features/progress/progress.service';
 import { updateSubjectProgressSchema } from '@/features/progress/progress.validation';
 
@@ -27,6 +28,6 @@ export async function POST(req: NextRequest) {
     const data = await ProgressService.updateSubjectProgress(userId, parsed.data);
     return NextResponse.json({ success: true, data }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: safeErrorMessage(error, 'Failed to fetch subject progress.') }, { status: 500 });
   }
 }

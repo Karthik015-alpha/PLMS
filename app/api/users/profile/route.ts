@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import UsersService from '@/features/users/users.service'
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server'
+import { safeErrorMessage } from '@/lib/safe-error'
 
 async function getUserId(): Promise<string | null> {
   const cookieStore = await cookies();
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest) {
         success: false,
         error: {
           code: 'profile_fetch_failed',
-          message: (error as Error).message || 'Failed to fetch user profile.',
+          message: safeErrorMessage(error, 'Failed to fetch user profile.'),
         },
       },
       { status: 500 },
@@ -114,7 +115,7 @@ export async function PUT(req: NextRequest) {
         success: false,
         error: {
           code: 'profile_update_failed',
-          message: (error as Error).message || 'Failed to update user profile.',
+          message: safeErrorMessage(error, 'Failed to update user profile.'),
         },
       },
       { status: 500 },

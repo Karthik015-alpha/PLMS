@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server';
+import { safeErrorMessage } from '@/lib/safe-error';
 import { NotesService } from '@/features/notes/notes.service';
 
 async function getUserId(): Promise<string | null> {
@@ -22,7 +23,7 @@ export async function GET(_req: NextRequest, context: { params: Promise<{ noteId
 
     return NextResponse.json({ success: true, data: note }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: { message: error.message } }, { status: 500 });
+    return NextResponse.json({ success: false, error: { message: safeErrorMessage(error, 'Failed to load note.') } }, { status: 500 });
   }
 }
 
@@ -46,7 +47,7 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ noteI
 
     return NextResponse.json({ success: true, data: note }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: { message: error.message } }, { status: 500 });
+    return NextResponse.json({ success: false, error: { message: safeErrorMessage(error, 'Failed to update note.') } }, { status: 500 });
   }
 }
 
@@ -62,6 +63,6 @@ export async function DELETE(_req: NextRequest, context: { params: Promise<{ not
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: { message: error.message } }, { status: 500 });
+    return NextResponse.json({ success: false, error: { message: safeErrorMessage(error, 'Failed to delete note.') } }, { status: 500 });
   }
 }

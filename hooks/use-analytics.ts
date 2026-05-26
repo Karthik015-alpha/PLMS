@@ -24,7 +24,8 @@ export function useAnalytics() {
       const data: AnalyticsApiResponse<T> = await response.json();
       
       if (!response.ok || !data.success) {
-        throw new Error(data.error || data.message || 'An error occurred while fetching analytics.');
+        const serverMsg = typeof (data as any).error === 'string' ? (data as any).error : (data as any).message;
+        throw new Error(serverMsg || 'An error occurred while fetching analytics.');
       }
       
       return data.data as T;

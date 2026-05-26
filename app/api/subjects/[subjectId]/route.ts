@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import SubjectsService from '@/features/subjects/subjects.service'
+import { safeErrorMessage } from '@/lib/safe-error'
 
 export async function GET(_: NextRequest, context: { params: Promise<{ subjectId: string }> }) {
   try {
@@ -25,7 +26,7 @@ export async function GET(_: NextRequest, context: { params: Promise<{ subjectId
         success: false,
         error: {
           code: 'subject_fetch_failed',
-          message: (error as Error).message || 'Failed to fetch subject.',
+          message: safeErrorMessage(error, 'Failed to fetch subject.'),
         },
       },
       { status: 500 },
@@ -75,7 +76,7 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ subje
         success: false,
         error: {
           code: 'subject_update_failed',
-          message: (error as Error).message || 'Failed to update subject.',
+          message: safeErrorMessage(error, 'Failed to update subject.'),
         },
       },
       { status: 500 },
@@ -107,7 +108,7 @@ export async function DELETE(_: NextRequest, context: { params: Promise<{ subjec
         success: false,
         error: {
           code: 'subject_delete_failed',
-          message: (error as Error).message || 'Failed to delete subject.',
+          message: safeErrorMessage(error, 'Failed to delete subject.'),
         },
       },
       { status: 500 },

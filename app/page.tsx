@@ -277,12 +277,6 @@ interface ShardManager {
                 Get Started Free
                 <ArrowRight className="size-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
-              <a
-                href="#showcase"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 px-6 py-3.5 text-sm font-semibold text-white transition duration-300 backdrop-blur-sm"
-              >
-                View Dashboard Showcase
-              </a>
             </div>
           </div>
 

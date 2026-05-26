@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server';
+import { safeErrorMessage } from '@/lib/safe-error';
 import { AnalyticsService } from '@/features/analytics/analytics.service';
 import { analyticsFilterSchema } from '@/features/analytics/analytics.validation';
 
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
     
     return NextResponse.json({ success: true, data: summary }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: safeErrorMessage(error, 'Failed to load analytics.') }, { status: 500 });
   }
 }
 
@@ -49,6 +50,6 @@ export async function POST(req: NextRequest) {
     
     return NextResponse.json({ success: true, data: summary }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: safeErrorMessage(error, 'Failed to load analytics.') }, { status: 500 });
   }
 }

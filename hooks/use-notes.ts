@@ -17,7 +17,7 @@ export function useNotes() {
       const res = await fetch(url.toString());
       if (!res.ok) throw new Error('Failed to fetch notes');
       const data: NotesListApiResponse = await res.json();
-      if (data.error) throw new Error(data.error.message);
+      if (data.error) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || 'Failed to fetch notes');
       return data.data || [];
     } catch (err: any) {
       setError(err.message || 'An error occurred');
@@ -34,7 +34,7 @@ export function useNotes() {
       const res = await fetch(`/api/notes/${noteId}`);
       if (!res.ok) throw new Error('Failed to fetch note');
       const data: NoteApiResponse = await res.json();
-      if (data.error) throw new Error(data.error.message);
+      if (data.error) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || 'Failed to fetch note');
       return data.data;
     } catch (err: any) {
       setError(err.message || 'An error occurred');
@@ -55,7 +55,7 @@ export function useNotes() {
       });
       if (!res.ok) throw new Error('Failed to create note');
       const data: NoteApiResponse = await res.json();
-      if (data.error) throw new Error(data.error.message);
+      if (data.error) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || 'Failed to create note');
       return data.data;
     } catch (err: any) {
       setError(err.message || 'An error occurred');
@@ -76,7 +76,7 @@ export function useNotes() {
       });
       if (!res.ok) throw new Error('Failed to update note');
       const data: NoteApiResponse = await res.json();
-      if (data.error) throw new Error(data.error.message);
+      if (data.error) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || 'Failed to update note');
       return data.data;
     } catch (err: any) {
       setError(err.message || 'An error occurred');
@@ -114,7 +114,7 @@ export function useNotes() {
       });
       if (!res.ok) throw new Error('Failed to upload PDF');
       const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
+      if (data.error) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || 'Failed to upload file');
       return data.fileUrl as string;
     } catch (err: any) {
       setError(err.message || 'An error occurred');

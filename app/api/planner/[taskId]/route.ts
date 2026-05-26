@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { PlannerService } from '@/features/planner/planner.service';
 import { updateTaskSchema, markTaskCompletedSchema } from '@/features/planner/planner.validation';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server';
+import { safeErrorMessage } from '@/lib/safe-error';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,7 +30,7 @@ export async function GET(req: NextRequest, context: RouteParams) {
     return NextResponse.json({ success: true, data: task }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: error.message || 'Internal Server Error' },
+      { success: false, error: safeErrorMessage(error, 'Internal Server Error') },
       { status: 500 }
     );
   }
@@ -74,7 +75,7 @@ export async function PATCH(req: NextRequest, context: RouteParams) {
     return NextResponse.json({ success: true, data: updatedTask }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: error.message || 'Internal Server Error' },
+      { success: false, error: safeErrorMessage(error, 'Internal Server Error') },
       { status: 500 }
     );
   }
@@ -95,7 +96,7 @@ export async function DELETE(req: NextRequest, context: RouteParams) {
     return NextResponse.json({ success: true, message: 'Task deleted successfully' }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: error.message || 'Internal Server Error' },
+      { success: false, error: safeErrorMessage(error, 'Internal Server Error') },
       { status: 500 }
     );
   }

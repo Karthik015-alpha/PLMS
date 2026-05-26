@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import TopicsService, { TopicStatus } from '@/features/topics/topics.service'
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server'
+import { safeErrorMessage } from '@/lib/safe-error'
 
 const VALID_STATUSES: TopicStatus[] = ['Not Started', 'In Progress', 'Completed']
 
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
         success: false,
         error: {
           code: 'topics_list_failed',
-          message: (error as Error).message || 'Failed to fetch topics.',
+          message: safeErrorMessage(error, 'Failed to fetch topics.'),
         },
       },
       { status: 500 },
@@ -121,7 +122,7 @@ export async function POST(req: NextRequest) {
         success: false,
         error: {
           code: 'topic_create_failed',
-          message: (error as Error).message || 'Failed to create topic.',
+          message: safeErrorMessage(error, 'Failed to create topic.'),
         },
       },
       { status: 500 },

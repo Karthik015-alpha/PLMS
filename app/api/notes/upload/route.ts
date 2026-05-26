@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server';
+import { safeErrorMessage } from '@/lib/safe-error';
 import { NotesService } from '@/features/notes/notes.service';
 
 async function getUserId(): Promise<string | null> {
@@ -34,6 +35,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, fileUrl: upload.fileUrl, path: upload.path }, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: safeErrorMessage(error, 'Failed to upload note.') }, { status: 500 });
   }
 }

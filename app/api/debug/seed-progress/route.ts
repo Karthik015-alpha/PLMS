@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server'
 import { ProgressService } from '@/features/progress/progress.service'
+import { safeErrorMessage } from '@/lib/safe-error'
 
 async function getUserId(): Promise<string | null> {
   const cookieStore = await cookies()
@@ -27,6 +28,6 @@ export async function POST(req: NextRequest) {
     const result = await ProgressService.updateSubjectProgress(userId, { subjectId, value, isCompleted })
     return NextResponse.json({ success: true, data: result }, { status: 200 })
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err?.message ?? String(err) }, { status: 500 })
+    return NextResponse.json({ success: false, error: safeErrorMessage(err, 'Failed to seed progress.') }, { status: 500 })
   }
 }

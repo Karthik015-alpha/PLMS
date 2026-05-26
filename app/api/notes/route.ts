@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server';
+import { safeErrorMessage } from '@/lib/safe-error';
 import { NotesService } from '@/features/notes/notes.service';
 
 /**
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest) {
     const notes = await NotesService.listNotes({ userId, subjectId, topicId });
     return NextResponse.json({ success: true, data: notes }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: { message: error.message } }, { status: 500 });
+    return NextResponse.json({ success: false, error: { message: safeErrorMessage(error, 'Failed to process notes request.') } }, { status: 500 });
   }
 }
 

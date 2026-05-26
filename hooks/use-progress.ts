@@ -25,7 +25,8 @@ export function useProgress() {
       const data: ProgressApiResponse<T> = await response.json();
       
       if (!response.ok || !data.success) {
-        throw new Error(data.error || data.message || 'An error occurred while communicating with the server.');
+        const serverMsg = typeof (data as any).error === 'string' ? (data as any).error : (data as any).message;
+        throw new Error(serverMsg || 'An error occurred while communicating with the server.');
       }
       
       return data.data as T;

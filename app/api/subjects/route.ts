@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import SubjectsService from '@/features/subjects/subjects.service'
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server'
+import { safeErrorMessage } from '@/lib/safe-error'
 
 async function getUserId(): Promise<string | null> {
   const cookieStore = await cookies();
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
         success: false,
         error: {
           code: 'subjects_list_failed',
-          message: (error as Error).message || 'Failed to fetch subjects.',
+          message: safeErrorMessage(error, 'Failed to fetch subjects.'),
         },
       },
       { status: 500 },
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
         success: false,
         error: {
           code: 'subject_create_failed',
-          message: (error as Error).message || 'Failed to create subject.',
+          message: safeErrorMessage(error, 'Failed to create subject.'),
         },
       },
       { status: 500 },

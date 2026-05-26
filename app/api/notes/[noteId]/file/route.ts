@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server';
+import { safeErrorMessage } from '@/lib/safe-error';
 import { supabaseServer } from '@/lib/supabase-server';
 import { randomUUID } from 'crypto';
 
@@ -78,6 +79,6 @@ export async function GET(_req: NextRequest, context: { params: Promise<{ noteId
       },
     });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: { message: error.message } }, { status: 500 });
+    return NextResponse.json({ success: false, error: { message: safeErrorMessage(error, 'Unable to load file.') } }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server';
 import { supabaseServer } from '@/lib/supabase-server';
+import { safeErrorMessage } from '@/lib/safe-error';
 
 async function getUserId() {
   const cookieStore = await cookies();
@@ -54,6 +55,6 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: combined });
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: { message: err?.message || String(err) } }, { status: 500 });
+    return NextResponse.json({ success: false, error: { message: safeErrorMessage(err, 'Failed to fetch activity.') } }, { status: 500 });
   }
 }
