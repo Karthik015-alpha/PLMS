@@ -14,7 +14,6 @@ const NAV_ITEMS: NavItem[] = [
   { title: 'Study-Desk', href: '/study-desk', icon: <BookOpen size={18} /> },
   { title: 'Planner', href: '/planner', icon: <Calendar size={18} /> },
   { title: 'Analytics', href: '/analytics', icon: <BarChart2 size={18} /> },
-  { title: 'Settings', href: '/settings', icon: <Settings size={18} /> },
 ]
 
 export default function Sidebar({ collapsed, onCollapseToggle }: { collapsed: boolean; onCollapseToggle: () => void }) {
@@ -41,7 +40,12 @@ export default function Sidebar({ collapsed, onCollapseToggle }: { collapsed: bo
           <div className="h-8 w-8 rounded-md bg-indigo-600 flex items-center justify-center text-white font-semibold">PL</div>
           {!collapsed && <span className="font-semibold">PLMS</span>}
         </div>
-        <button onClick={onCollapseToggle} aria-label="Toggle sidebar" className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+        <button
+          onClick={onCollapseToggle}
+          aria-label="Toggle sidebar"
+          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+          suppressHydrationWarning
+        >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
       </div>
@@ -68,6 +72,7 @@ export default function Sidebar({ collapsed, onCollapseToggle }: { collapsed: bo
           onClick={handleLogout}
           disabled={isLoggingOut}
           className="w-full flex items-center gap-3 p-2 rounded-md text-sm text-red-600 hover:bg-red-50 dark:hover:bg-gray-800 disabled:opacity-50"
+          suppressHydrationWarning
         >
           <LogOut size={16} />
           {!collapsed && <span>{isLoggingOut ? 'Signing out...' : 'Logout'}</span>}

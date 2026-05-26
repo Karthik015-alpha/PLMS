@@ -1,6 +1,7 @@
 import { supabaseServer } from '@/lib/supabase-server';
 import { Progress } from '@/types/progress';
 import { UpdateProgressInput, UpdateSubjectProgressInput } from './progress.validation';
+import { calculateNewStreak } from '@/utils/streak';
 
 const TABLE_NAME = 'progress';
 
@@ -89,7 +90,32 @@ export class ProgressService {
       .single();
 
     if (error) throw new Error(`Failed to update task progress: ${error.message}`);
-    return mapToProgress(data);
+    const progress = mapToProgress(data);
+
+    // Update user's streak metadata based on this activity
+    try {
+      const { data: userRow, error: userErr } = await supabaseServer
+        .from('users')
+        .select('metadata')
+        .eq('id', userId)
+        .single();
+
+      if (!userErr) {
+        const currentMeta = (userRow && userRow.metadata) || {};
+        const storedStreak = Number(currentMeta.streak || 0);
+        const lastStudyDate = currentMeta.lastStudyDate || currentMeta.last_study_date || null;
+
+        const calculated = calculateNewStreak(storedStreak, lastStudyDate, new Date(updates.updated_at));
+        const newMeta = { ...currentMeta, streak: calculated.currentStreak, lastStudyDate: calculated.lastStudyDate };
+
+        await supabaseServer.from('users').update({ metadata: newMeta }).eq('id', userId);
+      }
+    } catch (err) {
+      // non-fatal: don't block progress update
+      console.error('Failed to update user streak metadata:', (err as Error).message);
+    }
+
+    return progress;
   }
 
   /**
@@ -111,7 +137,30 @@ export class ProgressService {
       .single();
 
     if (error) throw new Error(`Failed to mark task complete: ${error.message}`);
-    return mapToProgress(data);
+    const progress = mapToProgress(data);
+
+    try {
+      const { data: userRow, error: userErr } = await supabaseServer
+        .from('users')
+        .select('metadata')
+        .eq('id', userId)
+        .single();
+
+      if (!userErr) {
+        const currentMeta = (userRow && userRow.metadata) || {};
+        const storedStreak = Number(currentMeta.streak || 0);
+        const lastStudyDate = currentMeta.lastStudyDate || currentMeta.last_study_date || null;
+
+        const calculated = calculateNewStreak(storedStreak, lastStudyDate, new Date(updates.updated_at));
+        const newMeta = { ...currentMeta, streak: calculated.currentStreak, lastStudyDate: calculated.lastStudyDate };
+
+        await supabaseServer.from('users').update({ metadata: newMeta }).eq('id', userId);
+      }
+    } catch (err) {
+      console.error('Failed to update user streak metadata:', (err as Error).message);
+    }
+
+    return progress;
   }
 
   /**
@@ -145,6 +194,29 @@ export class ProgressService {
     }
 
     if (result.error) throw new Error(`Failed to update subject progress: ${result.error.message}`);
-    return mapToProgress(result.data);
+    const progress = mapToProgress(result.data);
+
+    try {
+      const { data: userRow, error: userErr } = await supabaseServer
+        .from('users')
+        .select('metadata')
+        .eq('id', userId)
+        .single();
+
+      if (!userErr) {
+        const currentMeta = (userRow && userRow.metadata) || {};
+        const storedStreak = Number(currentMeta.streak || 0);
+        const lastStudyDate = currentMeta.lastStudyDate || currentMeta.last_study_date || null;
+
+        const calculated = calculateNewStreak(storedStreak, lastStudyDate, new Date(updates.updated_at));
+        const newMeta = { ...currentMeta, streak: calculated.currentStreak, lastStudyDate: calculated.lastStudyDate };
+
+        await supabaseServer.from('users').update({ metadata: newMeta }).eq('id', userId);
+      }
+    } catch (err) {
+      console.error('Failed to update user streak metadata:', (err as Error).message);
+    }
+
+    return progress;
   }
 }

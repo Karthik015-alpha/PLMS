@@ -16,8 +16,17 @@ export async function calculateProgressForSubject(subjectId: string): Promise<nu
     const total = rows.length
     if (total === 0) return 0
 
-    const completed = rows.filter((r) => r.metadata?.status === 'Completed').length
-    return computeProgress(completed, total)
+    let totalPoints = 0
+    for (const r of rows) {
+      const status = r.metadata?.status
+      if (status === 'Completed') {
+        totalPoints += 100
+      } else if (status === 'In Progress') {
+        totalPoints += 50
+      }
+    }
+
+    return Math.round(totalPoints / total)
   } catch (err) {
     throw new Error(`calculateProgressForSubject failed: ${(err as Error).message}`)
   }

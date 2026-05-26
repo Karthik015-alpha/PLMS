@@ -65,18 +65,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn("font-sans dark", geist.variable)} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#0f766e" />
+        <meta name="theme-color" content="#030303" />
         <link rel="canonical" href="https://plms.example.com" />
         <script dangerouslySetInnerHTML={{__html: `
           try {
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-              document.documentElement.classList.add('dark');
-            } else {
-              document.documentElement.classList.remove('dark');
-            }
+            document.documentElement.classList.add('dark');
           } catch (_) {}
         `}} />
       </head>

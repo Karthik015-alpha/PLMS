@@ -2,12 +2,11 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter, useParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { useSubjects } from '@/hooks/use-subjects'
 import { useTopics } from '@/hooks/use-topics'
 
 export default function SubjectDetailPage() {
-  const router = useRouter()
   const params = useParams()
   const subjectId = Array.isArray(params?.subjectId) ? params.subjectId[0] : params?.subjectId
   const {
@@ -15,7 +14,6 @@ export default function SubjectDetailPage() {
     loading: subjectLoading,
     error: subjectError,
     fetchSubject,
-    deleteSubject,
   } = useSubjects()
   const {
     topics,
@@ -30,17 +28,6 @@ export default function SubjectDetailPage() {
     fetchSubject(subjectId)
     fetchTopics(subjectId)
   }, [fetchSubject, fetchTopics, subjectId])
-
-  const handleDeleteSubject = async () => {
-    if (!subjectId) return
-    const confirmed = window.confirm('Delete this subject and all topics?')
-    if (!confirmed) return
-
-    const deleted = await deleteSubject(subjectId)
-    if (deleted) {
-      router.push('/subjects')
-    }
-  }
 
   const handleDeleteTopic = async (topicId: string) => {
     const confirmed = window.confirm('Delete this topic?')
@@ -60,16 +47,6 @@ export default function SubjectDetailPage() {
           <Link href="/subjects" className="rounded-md border border-slate-300 px-3 py-2 text-sm">
             Back to subjects
           </Link>
-          <Link href={`/subjects/${subjectId}/edit`} className="rounded-md bg-slate-100 px-3 py-2 text-sm text-slate-900 hover:bg-slate-200">
-            Edit subject
-          </Link>
-          <button
-            type="button"
-            onClick={handleDeleteSubject}
-            className="rounded-md bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-500"
-          >
-            Delete subject
-          </button>
         </div>
       </div>
 
@@ -79,12 +56,6 @@ export default function SubjectDetailPage() {
       {subject && (
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{subject.title}</h2>
-          <p className="text-sm text-gray-500 mt-1">Progress: {subject.progress}%</p>
-          {subject.description && <p className="mt-4 text-gray-700 dark:text-gray-300">{subject.description}</p>}
-          <div className="mt-4 text-sm text-gray-500 space-y-1">
-            <p>Created: {new Date(subject.createdAt).toLocaleDateString()}</p>
-            <p>Updated: {new Date(subject.updatedAt).toLocaleDateString()}</p>
-          </div>
         </div>
       )}
 

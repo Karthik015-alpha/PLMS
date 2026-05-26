@@ -19,7 +19,7 @@ export class AnalyticsService {
   /**
    * Get total topics and completed topics linked to subjects owned by the user.
    */
-  static async getTopicsMetrics(userId: string): Promise<{ total: number, completed: number }> {
+  static async getTopicsMetrics(userId: string): Promise<{ total: number, completed: number, inProgress: number }> {
     const { data: subjects, error: subjErr } = await supabaseServer
       .from('subjects')
       .select('id')
@@ -28,7 +28,7 @@ export class AnalyticsService {
     if (subjErr) throw new Error(`Failed to fetch user subjects: ${subjErr.message}`);
     
     const subjectIds = (subjects || []).map(s => s.id);
-    if (subjectIds.length === 0) return { total: 0, completed: 0 };
+    if (subjectIds.length === 0) return { total: 0, completed: 0, inProgress: 0 };
     
     const { data: topics, error } = await supabaseServer
       .from('topics')
@@ -39,15 +39,21 @@ export class AnalyticsService {
     
     let total = 0;
     let completed = 0;
-    
+    let inProgress = 0;
+
     for (const topic of topics || []) {
       total += 1;
-      if (topic.metadata && topic.metadata.status === 'Completed') {
+      const status = topic?.metadata?.status;
+      if (!status) continue;
+      const normalized = String(status).trim().toLowerCase();
+      if (normalized === 'completed') {
         completed += 1;
+      } else if (normalized === 'in progress' || normalized === 'inprogress' || normalized === 'in-progress') {
+        inProgress += 1;
       }
     }
-    
-    return { total, completed };
+
+    return { total, completed, inProgress };
   }
 
   /**
@@ -158,12 +164,26 @@ export class AnalyticsService {
       streakCount = calculated.currentStreak;
     }
 
+    // Combined (tasks + topics) completion rate — keep as `completionRate`
     const totalCombined = tasksMetrics.total + topicsMetrics.total;
     const completedCombined = tasksMetrics.completed + topicsMetrics.completed;
-    
-    const completionRate = totalCombined > 0 
-      ? Math.round((completedCombined / totalCombined) * 100) 
+    const completionRate = totalCombined > 0
+      ? Math.round((completedCombined / totalCombined) * 100)
       : 0;
+
+    // Topics-only weighted formula (Completed=1.0, InProgress=0.5)
+    const topicsWeightedScore = (topicsMetrics.completed || 0) + 0.5 * (topicsMetrics.inProgress || 0);
+    const topicsCompletionRate = topicsMetrics.total > 0
+      ? Math.round((topicsWeightedScore / topicsMetrics.total) * 100)
+      : 0;
+
+    // Tasks-only completion rate
+    const tasksCompletionRate = tasksMetrics.total > 0
+      ? Math.round((tasksMetrics.completed / tasksMetrics.total) * 100)
+      : 0;
+
+    // Set overallProgress to tasks-only per request
+    const overallProgress = tasksCompletionRate;
 
     return {
       totalSubjects,
@@ -172,6 +192,8 @@ export class AnalyticsService {
       completedTasks: tasksMetrics.completed,
       pendingTasks: tasksMetrics.pending,
       completionRate,
+      overallProgress,
+      topicsCompletionRate,
       streakCount,
       totalNotes,
     };

@@ -14,7 +14,7 @@ const NAV_ITEMS = [
   { title: 'Study-Desk', href: '/study-desk', icon: <BookOpen size={18} /> },
   { title: 'Planner', href: '/planner', icon: <Calendar size={18} /> },
   { title: 'Analytics', href: '/analytics', icon: <BarChart2 size={18} /> },
-  { title: 'Settings', href: '/settings', icon: <Settings size={18} /> },
+  
 ]
 
 export default function MobileSidebar({ open, onClose }: Props) {
@@ -46,7 +46,13 @@ export default function MobileSidebar({ open, onClose }: Props) {
             <div className="h-8 w-8 rounded-md bg-indigo-600 flex items-center justify-center text-white font-semibold">PL</div>
             <span className="font-semibold">PLMS</span>
           </div>
-          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"><X size={18} /></button>
+          <button
+            onClick={onClose}
+            className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+            suppressHydrationWarning
+          >
+            <X size={18} />
+          </button>
         </div>
 
         <nav>
@@ -68,6 +74,7 @@ export default function MobileSidebar({ open, onClose }: Props) {
             onClick={handleLogout}
             disabled={isLoggingOut}
             className="w-full flex items-center gap-3 p-2 rounded-md text-sm text-red-600 hover:bg-red-50 dark:hover:bg-gray-800 disabled:opacity-50"
+            suppressHydrationWarning
           >
             <LogOut size={16} />
             <span>{isLoggingOut ? 'Signing out...' : 'Logout'}</span>

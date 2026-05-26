@@ -24,13 +24,33 @@ export class UsersService {
     }
   }
 
-  static async updateProfile(userId: string, payload: { displayName: string }): Promise<UserProfile> {
+  static async updateProfile(
+    userId: string,
+    payload: { displayName?: string; role?: string },
+  ): Promise<UserProfile> {
     try {
+      // fetch current metadata to merge role without overwriting other keys
+      const { data: current, error: fetchErr } = await supabaseServer
+        .from('users')
+        .select('metadata')
+        .eq('id', userId)
+        .single()
+
+      if (fetchErr) throw fetchErr
+
+      const currentMetadata = (current && current.metadata) || {}
+      const newMetadata = { ...currentMetadata }
+      if (payload.role !== undefined) {
+        newMetadata.role = payload.role
+      }
+
+      const updateObj: Record<string, any> = {}
+      if (payload.displayName !== undefined) updateObj.display_name = payload.displayName
+      if (payload.role !== undefined) updateObj.metadata = newMetadata
+
       const { data, error } = await supabaseServer
         .from('users')
-        .update({
-          display_name: payload.displayName,
-        })
+        .update(updateObj)
         .eq('id', userId)
         .select('id, email, display_name, avatar_url, metadata')
         .single()

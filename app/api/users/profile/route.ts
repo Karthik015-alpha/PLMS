@@ -40,7 +40,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
-    let payload: { displayName?: any }
+    let payload: { displayName?: any; role?: any }
     try {
       payload = await req.json()
     } catch {
@@ -57,23 +57,55 @@ export async function PUT(req: NextRequest) {
     }
 
     const displayName = payload?.displayName
+    const role = payload?.role
 
-    if (displayName === undefined || typeof displayName !== 'string' || displayName.trim() === '') {
+    if (displayName === undefined && role === undefined) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'invalid_payload',
-            message: 'display name must be a non-empty string.',
+            message: 'Must provide displayName or role to update.',
           },
         },
         { status: 400 },
       )
     }
 
-    const updatedProfile = await UsersService.updateProfile(userId, {
-      displayName: displayName.trim(),
-    })
+    const updatePayload: { displayName?: string; role?: string } = {}
+    if (displayName !== undefined) {
+      if (typeof displayName !== 'string' || displayName.trim() === '') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'invalid_payload',
+              message: 'display name must be a non-empty string.',
+            },
+          },
+          { status: 400 },
+        )
+      }
+      updatePayload.displayName = displayName.trim()
+    }
+
+    if (role !== undefined) {
+      if (typeof role !== 'string' || role.trim() === '') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'invalid_payload',
+              message: 'role must be a non-empty string.',
+            },
+          },
+          { status: 400 },
+        )
+      }
+      updatePayload.role = role.trim()
+    }
+
+    const updatedProfile = await UsersService.updateProfile(userId, updatePayload)
 
     return NextResponse.json({ success: true, data: updatedProfile }, { status: 200 })
   } catch (error) {

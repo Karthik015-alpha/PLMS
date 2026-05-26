@@ -9,7 +9,7 @@ import { FileText } from 'lucide-react';
 const SUBJECT_COLORS = ['#0f766e', '#2563eb', '#f97316', '#7c3aed', '#16a34a', '#db2777'];
 
 export default function DashboardPage() {
-  const { analytics, subjects, topics, progressList, isLoading, error, refresh } = useDashboard();
+  const { analytics, subjects, topics, progressList, isLoading, error } = useDashboard();
 
   const subjectChartData = (subjects || []).map((subject: any) => ({
     name: subject.title,
@@ -47,33 +47,10 @@ export default function DashboardPage() {
     <div className="font-sans">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
-        <button 
-          onClick={refresh} 
-          className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors"
-        >
-          Refresh Data
-        </button>
       </div>
       
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <TopicsProgressCard
-          topics={topics || []}
-          subjects={subjects || []}
-          colors={SUBJECT_COLORS}
-        />
-
-        <StatCard
-          title="Study Streak"
-          value={`${analytics?.streakCount ?? 0} Days 🔥`}
-          variant="orange"
-        />
-
-        <StatCard
-          title="Pending Tasks"
-          value={analytics?.pendingTasks ?? 0}
-        />
-
         <StatCard
           title="Completion Rate"
           value={`${analytics?.completionRate ?? 0}%`}
@@ -84,6 +61,23 @@ export default function DashboardPage() {
           title="Notes Saved"
           value={analytics?.totalNotes ?? 0}
           icon={<FileText className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />}
+        />
+
+        <StatCard
+          title="Pending Tasks"
+          value={analytics?.pendingTasks ?? 0}
+        />
+
+        <StatCard
+          title="Study Streak"
+          value={`${analytics?.streakCount ?? 0} Days 🔥`}
+          variant="orange"
+        />
+
+        <TopicsProgressCard
+          topics={topics || []}
+          subjects={subjects || []}
+          colors={SUBJECT_COLORS}
         />
       </div>
 

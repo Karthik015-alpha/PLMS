@@ -25,7 +25,7 @@ export async function middleware(req: NextRequest) {
   const hasSession = Boolean(await verifySessionToken(token))
 
   // If user is not authenticated and tries to access protected routes, redirect to login
-  const protectedPrefixes = ['/dashboard', '/planner', '/subjects', '/settings']
+  const protectedPrefixes = ['/dashboard', '/planner', '/subjects']
   if (!hasSession && protectedPrefixes.some((p) => pathname.startsWith(p))) {
     const url = req.nextUrl.clone()
     url.pathname = '/auth/login'

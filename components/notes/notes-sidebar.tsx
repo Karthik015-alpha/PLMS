@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useNotes } from '@/hooks/use-notes';
-import { FileText, Download, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { FileText, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface NotesSidebarProps {
@@ -88,16 +88,6 @@ export function NotesSidebar({ subjectId, topicId, className = '' }: NotesSideba
                     </p>
                   )}
                 </div>
-                
-                <a 
-                  href={`/api/notes/${note.id}`} // Assumes GET /api/notes/[id] returns the file or redirects to signed URL
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-full transition-colors opacity-0 group-hover:opacity-100"
-                  title="Download Note"
-                >
-                  <Download className="h-4 w-4" />
-                </a>
               </div>
             </div>
           ))}

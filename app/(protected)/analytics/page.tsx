@@ -36,12 +36,6 @@ export default function AnalyticsPage() {
     <div className="p-8 max-w-6xl mx-auto font-sans">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Detailed Analytics</h1>
-        <button 
-          onClick={() => fetchSummary()} 
-          className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors"
-        >
-          Refresh Data
-        </button>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -64,13 +58,13 @@ export default function AnalyticsPage() {
             
             <div className="pt-4">
               <div className="flex justify-between text-sm mb-2">
-                <span className="font-medium text-gray-600 dark:text-gray-400">Overall Progress</span>
-                <span className="font-bold text-blue-600 dark:text-blue-400">{analytics?.completionRate ?? 0}% Complete</span>
+                <span className="font-medium text-gray-600 dark:text-gray-400">Overall Progress (Tasks-only)</span>
+                <span className="font-bold text-blue-600 dark:text-blue-400">{analytics?.overallProgress ?? analytics?.completionRate ?? 0}%</span>
               </div>
               <div className="w-full bg-gray-100 dark:bg-slate-800 rounded-full h-3 overflow-hidden">
                 <div 
                   className="bg-blue-600 h-full rounded-full transition-all duration-1000 ease-out" 
-                  style={{ width: `${analytics?.completionRate ?? 0}%` }}
+                  style={{ width: `${analytics?.overallProgress ?? analytics?.completionRate ?? 0}%` }}
                 ></div>
               </div>
             </div>

@@ -14,6 +14,7 @@ const mapToTask = (row: any): Task => {
     id: row.id,
     title: row.title,
     description: row.details || row.short || '', // Map db details back to description
+    subjectId: row.subject_id || row.subjectId || null,
     completed: isCompleted,
     status: isCompleted ? 'Completed' : 'Pending', // Map to UI Enums
     dueDate: row.due_date,
@@ -117,6 +118,7 @@ export class PlannerService {
           owner: userId,
           title: payload.title,
           details: payload.description || null, // Map description to details
+          subject_id: payload.subjectId || null,
           due_date: payload.dueDate || null,
           status: toDbStatus(payload.status, payload.isCompleted),
         },
@@ -139,6 +141,7 @@ export class PlannerService {
     
     if (payload.title !== undefined) updates.title = payload.title;
     if (payload.description !== undefined) updates.details = payload.description; // Map description to details
+    if (payload.subjectId !== undefined) updates.subject_id = payload.subjectId;
     if (payload.dueDate !== undefined) updates.due_date = payload.dueDate;
     
     if (payload.isCompleted !== undefined || payload.status !== undefined) {
@@ -186,6 +189,16 @@ export class PlannerService {
    * Delete a task.
    */
   static async deleteTask(taskId: string, userId: string): Promise<boolean> {
+    const { error: progressError } = await supabaseServer
+      .from('progress')
+      .delete()
+      .eq('task_id', taskId)
+      .eq('user_id', userId);
+
+    if (progressError) {
+      throw new Error(`Failed to remove task progress: ${progressError.message}`);
+    }
+
     const { error } = await supabaseServer
       .from(TABLE_NAME)
       .delete()

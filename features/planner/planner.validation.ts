@@ -44,6 +44,7 @@ export const createTaskSchema = z.object({
   title: taskTitleSchema,
   description: taskDescriptionSchema,
   dueDate: taskDueDateSchema,
+  subjectId: z.string().uuid().optional(),
   isCompleted: taskCompletionStatusSchema.optional().default(false),
   status: taskStatusSchema.optional().default("Pending"),
 });
@@ -53,6 +54,7 @@ export const updateTaskSchema = z.object({
   title: taskTitleSchema.optional(),
   description: taskDescriptionSchema,
   dueDate: taskDueDateSchema,
+  subjectId: z.string().uuid().optional(),
   isCompleted: taskCompletionStatusSchema.optional(),
   status: taskStatusSchema.optional(),
 }).refine((data) => Object.keys(data).length > 0, {

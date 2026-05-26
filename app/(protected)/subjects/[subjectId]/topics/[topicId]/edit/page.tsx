@@ -107,20 +107,12 @@ export default function EditTopicPage() {
           />
         </label>
 
-        <label className="block">
+        <div className="block">
           <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Status</span>
-          <select
-            value={status}
-            onChange={(event) => setStatus(event.target.value as typeof TOPIC_STATUS_VALUES[number])}
-            className="mt-2 block w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2"
-          >
-            {TOPIC_STATUS_VALUES.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </label>
+          <div className="mt-2 block w-full rounded-md border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/40 text-gray-500 dark:text-gray-400 px-3 py-2 text-sm select-none">
+            {status}
+          </div>
+        </div>
 
         <label className="block">
           <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Estimated Hours</span>

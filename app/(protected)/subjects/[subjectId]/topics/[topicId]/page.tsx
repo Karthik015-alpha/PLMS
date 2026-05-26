@@ -2,17 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter, useParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { useTopics } from '@/hooks/use-topics'
 
 import { NotesSidebar } from '@/components/notes/notes-sidebar'
 
 export default function TopicDetailPage() {
-  const router = useRouter()
   const params = useParams()
   const subjectId = Array.isArray(params?.subjectId) ? params.subjectId[0] : params?.subjectId
   const topicId = Array.isArray(params?.topicId) ? params.topicId[0] : params?.topicId
-  const { topic, loading, error, fetchTopic, deleteTopic } = useTopics()
+  const { topic, loading, error, fetchTopic } = useTopics()
   const [sidebarRefreshKey, setSidebarRefreshKey] = useState(0)
 
   useEffect(() => {
@@ -35,17 +34,6 @@ export default function TopicDetailPage() {
     }
   }, [])
 
-  const handleDelete = async () => {
-    if (!topicId || !subjectId) return
-    const confirmed = window.confirm('Delete this topic?')
-    if (!confirmed) return
-
-    const deleted = await deleteTopic(topicId)
-    if (deleted) {
-      router.push(`/subjects/${subjectId}`)
-    }
-  }
-
   return (
     <div className="flex flex-col lg:flex-row gap-6 items-stretch">
       <div className="flex-1 space-y-6">
@@ -61,19 +49,6 @@ export default function TopicDetailPage() {
             >
               Back to subject
             </Link>
-            <Link
-              href={`/subjects/${subjectId}/topics/${topicId}/edit`}
-              className="rounded-md bg-slate-100 px-3 py-2 text-sm text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
-            >
-              Edit topic
-            </Link>
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="rounded-md bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-500"
-            >
-              Delete topic
-            </button>
           </div>
         </div>
 

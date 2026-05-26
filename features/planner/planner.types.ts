@@ -12,6 +12,7 @@ export interface CreateTaskPayload {
   title: string;
   description?: string;
   dueDate?: Date | string;
+  subjectId?: string;
   completed?: boolean;
 }
 

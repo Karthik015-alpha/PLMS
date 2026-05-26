@@ -35,7 +35,7 @@ export function useProfile() {
     }
   }, [])
 
-  const updateProfile = useCallback(async (displayName: string) => {
+  const updateProfile = useCallback(async (payload: { displayName?: string; role?: string }) => {
     setError(null)
     setIsLoading(true)
     try {
@@ -44,16 +44,16 @@ export function useProfile() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ displayName }),
+        body: JSON.stringify(payload),
       })
-      const payload = await response.json().catch(() => null)
+      const body = await response.json().catch(() => null)
 
-      if (response.ok && payload?.success && payload?.data) {
-        const updated = payload.data as UserProfile
+      if (response.ok && body?.success && body?.data) {
+        const updated = body.data as UserProfile
         setProfile(updated)
         return updated
       } else {
-        throw new Error(payload?.error?.message || 'Failed to update profile.')
+        throw new Error(body?.error?.message || 'Failed to update profile.')
       }
     } catch (err) {
       setError((err as Error).message)

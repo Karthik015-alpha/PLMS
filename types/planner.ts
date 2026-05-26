@@ -6,6 +6,7 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
+  subjectId?: string | null;
   completed: boolean;
   status?: 'Pending' | 'Completed';
   dueDate?: Date | string;

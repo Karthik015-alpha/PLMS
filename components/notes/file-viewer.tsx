@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { ExternalLink, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import type { Note } from '@/types/note';
 import { pushActivity } from '@/lib/activity-local';
 
 type FileViewerProps = {
   note: Note | null;
+  hideHeader?: boolean;
 };
 
 function getViewerKind(note: Note | null): 'pdf' | 'doc' | 'text' {
@@ -51,7 +51,7 @@ function looksLikeText(value: string): boolean {
   return controlCount / sample.length < 0.08 && !sample.startsWith('PK');
 }
 
-export function FileViewer({ note }: FileViewerProps) {
+export function FileViewer({ note, hideHeader = false }: FileViewerProps) {
   const [textPreview, setTextPreview] = useState<string | null>(null);
   const [isTextPreviewLoading, setIsTextPreviewLoading] = useState(false);
   const [textPreviewError, setTextPreviewError] = useState<string | null>(null);
@@ -134,13 +134,15 @@ export function FileViewer({ note }: FileViewerProps) {
 
   if (!note) {
     return (
-      <div className="flex min-h-[32rem] items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center shadow-sm dark:border-slate-700 dark:bg-slate-950">
-        <div className="max-w-sm">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 dark:bg-slate-900 dark:text-slate-300">
+      <div className="flex min-h-[32rem] items-center justify-center rounded-3xl border border-dashed border-white/10 bg-[#0a0a0a] px-6 py-10 text-center shadow-lg relative overflow-hidden">
+        {/* Subtle grid background specifically for the viewer container */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
+        <div className="relative z-10 max-w-sm">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04] text-neutral-400 border border-white/10">
             <FileText className="h-5 w-5" />
           </div>
-          <h3 className="mt-4 text-lg font-semibold text-slate-900 dark:text-slate-100">Select a file</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+          <h3 className="mt-4 text-lg font-semibold text-white tracking-tight">Select a file</h3>
+          <p className="mt-2 text-sm leading-6 text-neutral-400 font-normal">
             Choose View on a topic file to open it here in a separate frame.
           </p>
         </div>
@@ -154,62 +156,60 @@ export function FileViewer({ note }: FileViewerProps) {
   const officeViewerUrl = fileUrl ? `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}` : '';
 
   return (
-    <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950">
-      <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4 dark:border-slate-800">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">File Preview</p>
-          <h3 className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100">{note.title}</h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Type: {note.type.toUpperCase()}</p>
+    <section className="overflow-hidden rounded-3xl border border-white/[0.08] bg-[#0a0a0a] shadow-lg relative">
+      {/* Subtle grid background */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
+
+      {!hideHeader && (
+        <div className="relative z-10 flex items-center justify-between gap-3 border-b border-white/[0.05] px-5 py-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#00ff9d]">File Preview</p>
+            <h3 className="mt-1 text-lg font-bold text-white tracking-tight">{note.title}</h3>
+            <p className="text-xs font-mono text-neutral-500 mt-0.5 uppercase">Type: {note.type}</p>
+          </div>
         </div>
+      )}
 
-        <Link
-          href={previewHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-900"
-        >
-          Open
-          <ExternalLink className="h-4 w-4" />
-        </Link>
-      </div>
-
-      <div className="bg-slate-50 p-4 dark:bg-slate-900/30">
+      <div className="relative z-10 bg-neutral-950/80 p-4">
         {kind === 'pdf' ? (
           <iframe
             title={`${note.title} PDF preview`}
             src={previewHref}
-            className="h-[32rem] w-full rounded-2xl border border-slate-200 bg-white dark:border-slate-800"
+            className="h-[32rem] w-full rounded-2xl border border-white/[0.05] bg-[#030303]"
           />
         ) : kind === 'doc' && officeViewerUrl ? (
           <iframe
             title={`${note.title} document preview`}
             src={officeViewerUrl}
-            className="h-[32rem] w-full rounded-2xl border border-slate-200 bg-white dark:border-slate-800"
+            className="h-[32rem] w-full rounded-2xl border border-white/[0.05] bg-[#030303]"
           />
         ) : kind === 'doc' ? (
           <iframe
             title={`${note.title} document preview`}
             src={previewHref}
-            className="h-[32rem] w-full rounded-2xl border border-slate-200 bg-white dark:border-slate-800"
+            className="h-[32rem] w-full rounded-2xl border border-white/[0.05] bg-[#030303]"
           />
         ) : (
-          <div className="h-[32rem] overflow-auto rounded-2xl border border-slate-200 bg-white p-5 text-[14px] leading-7 text-slate-700 [text-size-adjust:100%] dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200 sm:text-[15px]">
+          <div className="h-[32rem] overflow-auto rounded-2xl border border-white/[0.08] bg-[#030303] p-5 text-[14px] leading-7 text-neutral-300 [text-size-adjust:100%] sm:text-[15px]">
             {isTextPreviewLoading ? (
-              <div className="flex h-full items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+              <div className="flex h-full items-center justify-center text-sm text-neutral-500 font-mono">
                 Loading text preview...
               </div>
             ) : textPreviewError ? (
               <div className="flex h-full items-center justify-center">
-                <div className="max-w-md rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-100">
-                  <p className="font-semibold">Text preview unavailable</p>
-                  <p className="mt-1">{textPreviewError}</p>
-                  <p className="mt-2 text-xs text-amber-800/80 dark:text-amber-200/80">
+                <div className="max-w-md rounded-2xl border border-amber-500/20 bg-amber-500/[0.02] p-4 text-sm leading-6 text-amber-200">
+                  <p className="font-semibold text-amber-100 flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-amber-500" />
+                    Text preview unavailable
+                  </p>
+                  <p className="mt-1.5 text-neutral-400">{textPreviewError}</p>
+                  <p className="mt-2 text-xs text-neutral-500">
                     Use Open to download the file or upload it as a real `.txt` note.
                   </p>
                 </div>
               </div>
             ) : (
-              <pre className="whitespace-pre-wrap break-words font-mono tabular-nums tracking-[0.01em]">
+              <pre className="whitespace-pre-wrap break-words font-mono text-[13px] text-neutral-200 tracking-tight">
                 {textPreview || 'No text content available for this file.'}
               </pre>
             )}

@@ -78,7 +78,7 @@ export function TopicsProgressCard({
           <h3 className="text-sm text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-2">
             Subjects
           </h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Colored by subject • {completedTopics} topics completed</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Colored by subject • {completedTopics} topics</p>
         </div>
         <div className="rounded-2xl bg-slate-50 dark:bg-slate-900/40 px-4 py-3 text-right">
           <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Total Subjects</p>
@@ -122,7 +122,7 @@ export function TopicsProgressCard({
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{subject.title}</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {progress.completed} of {progress.total} topics completed
+                      {progress.completed} of {progress.total} topics
                     </p>
                   </div>
                 </div>

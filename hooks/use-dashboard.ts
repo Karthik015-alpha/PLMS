@@ -84,6 +84,6 @@ export function useDashboard() {
     progressList,
     isLoading: isInitializing || isAnalyticsLoading || isProgressLoading || isSubjectsLoading || isTopicsLoading,
     error: analyticsError || progressError || subjectsError || topicsError,
-    refresh: initData
+    // `refresh` removed: avoid exposing imperative refresh from the hook
   };
 }

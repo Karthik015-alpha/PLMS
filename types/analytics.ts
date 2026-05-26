@@ -9,6 +9,10 @@ export interface Analytics {
   completedTasks: number;
   pendingTasks: number;
   completionRate: number;
+  // Overall progress based on topics only (weighted: Completed=1, InProgress=0.5)
+  overallProgress?: number;
+  // Optional: explicit topics-only rate for clarity
+  topicsCompletionRate?: number;
   streakCount: number;
   totalNotes: number;
 }
