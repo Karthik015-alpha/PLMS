@@ -30,8 +30,9 @@ export function useProgress() {
       
       return data.data as T;
     } catch (err: any) {
-      setError(err.message || 'An unknown error occurred.');
-      throw err;
+      const message = err?.message || 'An unknown error occurred.';
+      setError(message);
+      throw new Error(`${message} (fetch ${url})`);
     } finally {
       setIsLoading(false);
     }

@@ -64,12 +64,19 @@ export function useDashboard() {
 
   const initData = useCallback(async () => {
     setIsInitializing(true);
-    await Promise.all([
+    const results = await Promise.allSettled([
       fetchSummary(),
       fetchUserProgress(),
       fetchSubjects(),
       fetchAllTopics(),
     ]);
+
+    results.forEach((res, idx) => {
+      if (res.status === 'rejected') {
+        console.error('Dashboard init task failed (index=' + idx + ')', res.reason);
+      }
+    });
+
     setIsInitializing(false);
   }, [fetchSummary, fetchUserProgress, fetchSubjects, fetchAllTopics]);
 
