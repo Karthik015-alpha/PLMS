@@ -60,7 +60,7 @@ function TopicSection({
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => void onComplete(subject.id, topic.id, topic.title)}
@@ -71,13 +71,20 @@ function TopicSection({
             ✓
           </button>
 
-          <Link
-            href={`/subjects/${subject.id}/topics/${topic.id}`}
+          <button
+            type="button"
+            onClick={() => {
+              // Prefer a note that has a fileUrl, otherwise open the first note
+              const noteToOpen = topic.notes.find((n) => !!n.fileUrl) ?? topic.notes[0] ?? null;
+              if (noteToOpen) onSelectNote(noteToOpen, topic, subject.id);
+              else window.location.href = `/subjects/${subject.id}/topics/${topic.id}`;
+            }}
             className="inline-flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-slate-900 dark:text-slate-200"
+            title="Open topic files"
           >
             View
             <ArrowRight className="h-4 w-4" />
-          </Link>
+          </button>
         </div>
       </div>
     </article>
@@ -246,7 +253,9 @@ export default function StudyDeskPage() {
 
   const handleSelectNote = (note: Note, topic: StudyDeskTopicItem, subjectId: string) => {
     setSelectedNote(note);
-    setIsDesktopPreviewOpen(true);
+    shouldScrollPreviewRef.current = true;
+    // On mobile open the modal preview; on desktop show inline preview
+    if (!isDesktop) setIsDesktopPreviewOpen(true);
 
     if (topic.status === 'Not Started') {
       void updateTopicStatus(subjectId, topic.id, topic.title);
@@ -485,6 +494,14 @@ export default function StudyDeskPage() {
             <div className="flex-1 overflow-y-auto bg-neutral-950/20 p-4 md:p-6">
               <FileViewer note={selectedNote} hideHeader={true} />
             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {isDesktop && selectedNote ? (
+        <div ref={previewRef} className="mt-6">
+          <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+            <FileViewer note={selectedNote} hideHeader={false} />
           </div>
         </div>
       ) : null}
